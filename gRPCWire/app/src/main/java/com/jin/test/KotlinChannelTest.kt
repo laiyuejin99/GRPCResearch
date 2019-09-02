@@ -1,8 +1,8 @@
 package com.jin.test
 
-import com.realtime.grpc.protocode.HelloServiceClient
+import com.jin.codegenmodel.HelloServiceClient
 import com.realtime.grpc.protocode.StreamRequest
-import com.squareup.wire.GrpcClient
+import com.jin.grpc.GrpcClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking

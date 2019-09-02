@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.wire
+package com.jin.grpc
 
 import com.google.protobuf.MessageLite
+import com.squareup.wire.MessageSink
 import okio.Buffer
 import okio.BufferedSink
 import java.io.Closeable

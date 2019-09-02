@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.wire
+package com.jin.grpc
 
 import com.google.protobuf.MessageLite
-import com.jin.grpcwire.squareup.wire.GrpcUtils
-import com.jin.grpcwire.squareup.wire.internal.RPCMethod
+import com.jin.grpc.internal.RPCMethod
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
@@ -31,6 +30,8 @@ import java.lang.reflect.ParameterizedType
 import java.net.ProtocolException
 import kotlin.coroutines.Continuation
 import com.jakewharton.rxrelay2.PublishRelay
+import com.squareup.wire.MessageSink
+import com.squareup.wire.MessageSource
 import com.squareup.wire.internal.*
 import com.squareup.wire.internal.BlockingMessageSource
 import com.squareup.wire.internal.genericParameterType
@@ -82,8 +83,11 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
     private fun callWithRxStream(grpcClient: GrpcClient): Pair<PublishRelay<S>, PublishRelay<R>> {
 
         val requestBody = newDuplexRequestBody()
+
         val sendRelay = PublishRelay.create<S>()
+
         val receiveRelay = PublishRelay.create<R>();
+
 
         val messageSink = requestBody.messageSink<S>();
 
@@ -177,10 +181,8 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
         path: String,
         responseClass: Class<R>
     ) : GrpcMethod<S, R>(path, responseClass) {
-        override fun invoke(
-            grpcClient: GrpcClient,
-            args: Array<Any>
-        ): Pair<SendChannel<S>, Deferred<R>> {
+
+        override fun invoke(grpcClient: GrpcClient,args: Array<Any>): Pair<SendChannel<S>, Deferred<R>> {
             val (requestChannel, responseChannel) = super.callWithChannels(grpcClient)
 
             return Pair(
@@ -191,6 +193,17 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
                     responseChannel.consume { receive() }
                 }
             )
+        }
+    }
+
+
+    /** rx streaming request. */
+    class RxStreamingRequest<S : MessageLite, R : MessageLite>(
+        path: String,
+        responseClass: Class<R>
+    ) : GrpcMethod<S, R>(path, responseClass) {
+        override fun invoke(grpcClient: GrpcClient, args: Array<Any>): Pair<PublishRelay<S>, PublishRelay<R>> {
+            return super.callWithRxStream(grpcClient)
         }
     }
 
@@ -258,11 +271,7 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
             val rpcMethod = getAnnotation(RPCMethod::class.java)
 
             val responseClass: Class<R> = GrpcUtils.getClassByString(rpcMethod.responseClass) as Class<R>
-            System.out.println("response class = " + rpcMethod.responseClass)
-            System.out.println("response class = " + responseClass)
 
-
-            System.out.println("mark 2")
             val parameterTypes = genericParameterTypes
 
             val returnType = genericReturnType
@@ -284,14 +293,11 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
                 // Blocking streaming response.
                 // MessageSource<ResponseType> methodName(RequestType)
                 if (returnType.rawType() == MessageSource::class.java) {
-                    System.out.println("mark 99")
                     return BlockingStreamingResponse(rpcMethod.path, responseClass)
                 }
-                System.out.println("mark 4")
                 // Blocking request-response.
                 // ResponseType methodName(RequestType)
                 return BlockingRequestResponse(rpcMethod.path, responseClass)
-
             } else if (parameterTypes.isEmpty()) {
                 if (returnType.rawType() == Pair::class.java) {
                     val pairType = returnType as ParameterizedType
@@ -300,18 +306,17 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
 
                     // Coroutines full duplex.
                     // Pair<SendChannel<RequestType>, ReceiveChannel<ResponseType>> methodName()
-                    if (requestType == SendChannel::class.java
-                        && responseType == ReceiveChannel::class.java
-                    ) {
+                    if (requestType == SendChannel::class.java && responseType == ReceiveChannel::class.java) {
                         return FullDuplex(rpcMethod.path, responseClass)
                     }
 
                     // Coroutines streaming request.
                     // Pair<SendChannel<RequestType>, Deferred<ResponseType>> methodName()
-                    if (requestType == SendChannel::class.java
-                        && responseType == Deferred::class.java
-                    ) {
+                    if (requestType == SendChannel::class.java && responseType == Deferred::class.java) {
                         return StreamingRequest(rpcMethod.path, responseClass)
+                    }
+                    if (requestType == PublishRelay::class.java && responseType == PublishRelay::class.java) {
+                        return RxStreamingRequest(rpcMethod.path, responseClass)
                     }
 
                     // Blocking full duplex OR streaming request. (single response could be Future instead?)

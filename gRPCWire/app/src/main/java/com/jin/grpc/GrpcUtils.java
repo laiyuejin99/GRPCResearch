@@ -1,4 +1,4 @@
-package com.jin.grpcwire.squareup.wire;
+package com.jin.grpc;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessageLite;

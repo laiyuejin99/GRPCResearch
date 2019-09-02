@@ -1,4 +1,4 @@
-package com.jin.grpcwire.squareup.wire.internal
+package com.jin.grpc.internal
 
 
 @Target(AnnotationTarget.FUNCTION)

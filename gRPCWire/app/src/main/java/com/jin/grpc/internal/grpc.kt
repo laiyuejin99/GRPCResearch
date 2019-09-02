@@ -16,10 +16,9 @@
 package com.squareup.wire.internal
 
 import com.google.protobuf.MessageLite
-import com.squareup.wire.GrpcMessageSink
-import com.squareup.wire.GrpcMessageSource
-import com.squareup.wire.PipeDuplexRequestBody
-import com.squareup.wire.ProtoAdapter
+import com.jin.grpc.GrpcMessageSink
+import com.jin.grpc.GrpcMessageSource
+import com.jin.grpc.PipeDuplexRequestBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ReceiveChannel
