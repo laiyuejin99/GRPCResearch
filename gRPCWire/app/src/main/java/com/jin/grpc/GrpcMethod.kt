@@ -88,7 +88,6 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
 
         val receiveRelay = PublishRelay.create<R>();
 
-
         val messageSink = requestBody.messageSink<S>();
 
         //subscribe to send message
@@ -182,7 +181,7 @@ internal sealed class GrpcMethod<S : MessageLite, R : MessageLite>(
         responseClass: Class<R>
     ) : GrpcMethod<S, R>(path, responseClass) {
 
-        override fun invoke(grpcClient: GrpcClient,args: Array<Any>): Pair<SendChannel<S>, Deferred<R>> {
+        override fun invoke(grpcClient: GrpcClient, args: Array<Any>): Pair<SendChannel<S>, Deferred<R>> {
             val (requestChannel, responseChannel) = super.callWithChannels(grpcClient)
 
             return Pair(
