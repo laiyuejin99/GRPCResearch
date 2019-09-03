@@ -32,18 +32,14 @@ public class MessageStreamTest {
 
         HelloServiceClient client = grpcClient.create(JvmClassMappingKt.getKotlinClass(HelloServiceClient.class));
 
-
-
-
-        //streaming test block;
+        //streaming blocking usage;
         Pair<MessageSink<StreamRequest>, MessageSource<StreamResponse>> pair = client.streamingTalk();
         MessageSink<StreamRequest> requestMessageSink = pair.getFirst();
         MessageSource<StreamResponse> responseMessageSource = pair.getSecond();
-        requestMessageSink.write(StreamRequest.newBuilder().setRequestInfo("helloworld abcdefg").setRequestTime(System.currentTimeMillis()).setUUID("uuid-123-123-12345").build());
+
+        requestMessageSink.write(StreamRequest.newBuilder().setRequestInfo("helloworld ").setRequestTime(System.currentTimeMillis()).setUUID("uuid-123-123-12345").build());
+
         StreamResponse response = responseMessageSource.read();
         System.out.println("response data = " + response);
-
-
-
     }
 }

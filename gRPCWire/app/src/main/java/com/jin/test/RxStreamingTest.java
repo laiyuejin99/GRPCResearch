@@ -36,9 +36,7 @@ public class RxStreamingTest {
 
         HelloServiceClient client = grpcClient.create(JvmClassMappingKt.getKotlinClass(HelloServiceClient.class));
 
-
         Pair<PublishRelay<StreamRequest>, PublishRelay<StreamResponse>> pair = client.streamingTalkRx();
-
         PublishRelay<StreamRequest> sendRx = pair.getFirst();
         PublishRelay<StreamResponse> receiveRx = pair.getSecond();
 
@@ -48,7 +46,7 @@ public class RxStreamingTest {
                 .setUUID("uuid-123-123-12345")
                 .build();
 
-        sendRx.accept(request);
+        sendRx.accept(request);//send message
         sendRx.accept(request);
         sendRx.accept(request);
         sendRx.accept(request);
