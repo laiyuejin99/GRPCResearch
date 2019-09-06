@@ -1,4 +1,4 @@
-package com.jin.codegenmodel
+package com.jin.servicegen
 
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jin.grpc.internal.RPCMethod

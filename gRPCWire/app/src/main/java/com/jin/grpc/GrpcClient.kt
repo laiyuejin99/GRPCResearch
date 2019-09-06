@@ -27,7 +27,7 @@ import okhttp3.RequestBody
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import kotlin.reflect.KClass
-
+//pure okhttp.
 class GrpcClient private constructor(
     internal val client: OkHttpClient,
     internal val baseUrl: HttpUrl

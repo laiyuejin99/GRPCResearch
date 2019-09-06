@@ -1,6 +1,6 @@
 package com.jin.test
 
-import com.jin.codegenmodel.HelloServiceClient
+import com.jin.servicegen.HelloServiceClient
 import com.realtime.grpc.protocode.StreamRequest
 import com.jin.grpc.GrpcClient
 import kotlinx.coroutines.GlobalScope

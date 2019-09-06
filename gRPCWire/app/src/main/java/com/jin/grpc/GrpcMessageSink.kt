@@ -41,11 +41,8 @@ internal class GrpcMessageSink<T : MessageLite> constructor(
     encodingSink.writeByte(compressedFlag)
 
     val encodedMessage = Buffer()
-    System.out.println("mark 8")
 
     encodedMessage.write(message.toByteArray())
-    System.out.println("mark 9")
-
     // TODO: fail if the message size is more than MAX_INT
     encodingSink.writeInt(encodedMessage.size.toInt())
     encodingSink.writeAll(encodedMessage)

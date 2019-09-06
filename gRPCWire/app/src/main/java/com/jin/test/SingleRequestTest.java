@@ -1,15 +1,10 @@
 package com.jin.test;
 
-import com.jin.codegenmodel.HelloServiceClient;
+import com.jin.servicegen.HelloServiceClient;
 import com.jin.grpc.GrpcClient;
 import com.realtime.grpc.protocode.HelloRequest;
 import com.realtime.grpc.protocode.HelloResponse;
-import com.realtime.grpc.protocode.StreamRequest;
-import com.realtime.grpc.protocode.StreamResponse;
-import kotlin.Pair;
 import kotlin.jvm.JvmClassMappingKt;
-import kotlinx.coroutines.channels.ReceiveChannel;
-import kotlinx.coroutines.channels.SendChannel;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
